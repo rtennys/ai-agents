@@ -20,6 +20,23 @@ If the user asked to review the breakdown first, show it and wait. Otherwise cre
 
 Do not use GitHub commands. When writing under `artifacts/`, do not inspect Git state just to report those files.
 
+## Citing Code
+
+Never cite a line number. No `L123`, no `L123-456`, no "at line 123", no `file.cs:123`. Issues are read by sessions that start days or commits later, often after an earlier issue in the same queue has already moved the code. A stale line number is worse than no reference: it points confidently at the wrong thing.
+
+Anchor on things that survive edits, in this order of preference:
+
+1. A symbol name — `ValuationService.GetOptionGreeks`, `OptionModelSelector.SelectModel`.
+2. A named position inside a symbol — "the `case (int)PositionType.ListedOption:` arm of
+   `SetPlFields`", "the `if (savedVol != null)` block", "immediately around the
+   `GetOptionGreeks(pos, impliedGreeks);` call".
+3. A short quoted expression the reader can grep — `` `var strike = grp.Average(x => x.Vals.StrikePrice)` ``.
+4. Just the file path, when the file is small or the symbol name already locates it.
+
+Write references so they stay greppable: quote code exactly as it appears rather than paraphrasing it. A range that describes a whole member ("`L613-660`") is always just that member's name.
+
+When an issue depends on a component an earlier issue in this queue will create, name the intended type, method, and file path, and say the earlier issue owns it — not a location in today's code that the earlier issue is about to change.
+
 ## Slicing Rules
 
 - Prefer end-to-end behavior slices.
@@ -59,7 +76,7 @@ State what must stay unchanged, what must not be touched, what compatibility shi
 
 ## Implementation Notes
 
-Include only notes that prevent likely mistakes: repo patterns to reuse, existing helpers, ownership guidance, data-shape constraints, line-ending requirements from the PRD, or risky files/surfaces.
+Include only notes that prevent likely mistakes: repo patterns to reuse, existing helpers, ownership guidance, data-shape constraints, line-ending requirements from the PRD, or risky files/surfaces. Reference code per `Citing Code` above — symbols and quoted expressions, never line numbers.
 
 ## Acceptance Criteria
 

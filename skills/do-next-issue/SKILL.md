@@ -19,6 +19,10 @@ Do not start an implementation subagent unless explicitly instructed by the user
 
 Prefer SQL projection over calling LoadWith.
 
+Treat any line number in an issue file as untrustworthy. Earlier issues in the queue have already moved the code. Locate the code by the symbol or quoted expression named alongside it and verify you are looking at the right thing before relying on it. If an issue's description and the actual code disagree, the code wins — say so rather than implementing against the stale description.
+
+Never write a line number into an issue file, the index, or a commit message. Reference code by symbol name, by a named position inside a symbol, or by a short quoted expression a reader can grep.
+
 After implementation:
 
 1. Review the diff.
@@ -34,8 +38,9 @@ After implementation:
 8. If tests/build fail, stop. Do not commit. Do not mark the issue as completed. Explain the failure and what changed.
 9. If tests/build pass, commit the changes with the message "Issue <filename>" where <filename> is the issue file's base name without the `.md` extension (e.g. `006-add-status-confirmation-and-data-group-lock`).
 10. Mark the issue as completed in the index file. If any issues are unblocked, update their status as well. This file is gitignored progress-tracking state and must not be staged or committed.
-11. Confirm the tracked working tree is clean.
-12. Stop after this one issue.
+11. If this issue moved, renamed, extracted, or deleted code that a later issue's file references, fix those references now, while you still have the context. Point them at what actually exists after your change — the new type, method, and file path — and name the component rather than a location. Repair references that are now wrong; do not rewrite the later issue's scope or decisions. Issue files are gitignored progress-tracking state and must not be staged or committed.
+12. Confirm the tracked working tree is clean.
+13. Stop after this one issue.
 
 Do not begin another issue.
 

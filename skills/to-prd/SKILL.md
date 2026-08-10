@@ -17,6 +17,8 @@ Write a short PRD that a fresh, cheaper model can use to implement the change cl
 
 Do not include code snippets, GitHub issue text, broad brainstorming, or exhaustive file-by-file instructions.
 
+Never cite a line number — no `L123`, no `L123-456`, no "at line 123", no `file.cs:123`. Refer to code by symbol name, by a named position inside a symbol, or by a short quoted expression a reader can grep. Line numbers go stale between writing the PRD and implementing it, and anything stale here propagates into every issue split from this PRD.
+
 ## What To Capture
 
 Include enough detail for a new AI session to avoid guessing:
