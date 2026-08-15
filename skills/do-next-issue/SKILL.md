@@ -27,20 +27,26 @@ After implementation:
 
 1. Review the diff.
 2. Confirm the diff contains only changes relevant to the current issue.
-3. If the diff is large, risky, touches shared architecture, changes public contracts, changes database behavior, changes authentication/proxy behavior, or affects multiple areas of the app, start a fresh review subagent.
-4. Give the review subagent only:
+3. Usually review the work directly in the current session. Do not start a review subagent merely because the diff spans several files, changes a straightforward interface, or carries a general compatibility note when focused tests directly exercise the behavior.
+4. Start a fresh review subagent only when the implemented diff contains a concrete high-risk concern such as:
+   * authentication, authorization, sessions, cross-origin protection, proxy trust, or another security boundary
+   * a database schema or migration, possible data loss, transaction correctness, or concurrency
+   * destructive operations or consequential external side effects
+   * a large cross-cutting change with coupled behavior across independent areas
+   * a subtle public-contract change that focused tests cannot adequately protect
+5. When a review subagent is warranted, give it only:
    * the issue filename or issue entry
    * the current diff
-   * instructions to verify that the diff is correct, focused, and safe
-5. The review subagent must review only. It must not edit files.
-6. If the review subagent finds a real issue, fix it directly in the current session, then review the diff again.
-7. Run the relevant tests/build.
-8. If tests/build fail, stop. Do not commit. Do not mark the issue as completed. Explain the failure and what changed.
-9. If tests/build pass, commit the changes with the message "Issue <filename>" where <filename> is the issue file's base name without the `.md` extension (e.g. `006-add-status-confirmation-and-data-group-lock`).
-10. Mark the issue as completed in the index file. If any issues are unblocked, update their status as well. This file is gitignored progress-tracking state and must not be staged or committed.
-11. If this issue moved, renamed, extracted, or deleted code that a later issue's file references, fix those references now, while you still have the context. Point them at what actually exists after your change — the new type, method, and file path — and name the component rather than a location. Repair references that are now wrong; do not rewrite the later issue's scope or decisions. Issue files are gitignored progress-tracking state and must not be staged or committed.
-12. Confirm the tracked working tree is clean.
-13. Stop after this one issue.
+   * one or more narrow, adversarial questions tied to the concrete risk, such as "Find a way this POST could bypass cross-origin protection."
+6. Instruct the review subagent to inspect only the supplied issue and diff. It must not inspect the worktree, run tests or builds, call tools, or edit files. Do not ask for a generic correctness review.
+7. If the review subagent finds a real issue, fix it directly in the current session, then review the diff again. Treat repeated no-finding reviews as evidence to tighten the review threshold, not as a ritual to preserve.
+8. Run the relevant tests/build.
+9. If tests/build fail, stop. Do not commit. Do not mark the issue as completed. Explain the failure and what changed.
+10. If tests/build pass, commit the changes with the message "Issue <filename>" where <filename> is the issue file's base name without the `.md` extension (e.g. `006-add-status-confirmation-and-data-group-lock`).
+11. Mark the issue as completed in the index file. If any issues are unblocked, update their status as well. This file is gitignored progress-tracking state and must not be staged or committed.
+12. If this issue moved, renamed, extracted, or deleted code that a later issue's file references, fix those references now, while you still have the context. Point them at what actually exists after your change — the new type, method, and file path — and name the component rather than a location. Repair references that are now wrong; do not rewrite the later issue's scope or decisions. Issue files are gitignored progress-tracking state and must not be staged or committed.
+13. Confirm the tracked working tree is clean.
+14. Stop after this one issue.
 
 Do not begin another issue.
 
