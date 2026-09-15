@@ -7,7 +7,7 @@ description: Aggressively simplify code that was just written or changed, withou
 
 Make a just-finished change as small and as plain as it can be while behaving identically, then commit that cleanup as one revertable commit.
 
-The standard is fewer lines, fewer abstractions, and less to hold in your head — for the next human and the next model. Behavior is frozen; only the shape of the code moves.
+The standard is fewer *things* — fewer types, functions, parameters, branches, and indirections — not fewer characters. Measure a cut by what a reader no longer has to hold in their head, never by line count. A statement a reader can pause on is cheaper than an expression they must unpack. Behavior is frozen; only the shape of the code moves.
 
 ## Scope The Change
 
@@ -24,7 +24,7 @@ The standard is fewer lines, fewer abstractions, and less to hold in your head �
 
 Dispatch one fresh review subagent. Give it the diff, the full text of the touched files, and the cut list below. Instruct it to inspect only what it was given: no worktree access, no tests or builds, no tools, no edits. Its whole job is to return ranked cuts.
 
-Each cut names its location by symbol or a short greppable expression, says what to do (delete, inline, merge, rename), gives the one-line reason behavior is unchanged, and estimates the lines saved. Rank by lines saved, then by cognitive load removed.
+Each cut names its location by symbol or a short greppable expression, says what to do (delete, inline, merge, rename), gives the one-line reason behavior is unchanged, and names the thing removed — a type, a function, a parameter, a branch, a duplicate computation, a comment. Rank by how much a reader no longer has to track. A cut whose only gain is fewer lines is not a cut; do not propose it.
 
 ### The cut list
 
@@ -52,8 +52,28 @@ The reviewer proposes no cut that does any of the following, and you apply none 
 - Restyles working code — loop to `reduce`, `function` to arrow, quote style, reordering members.
 - Renames or removes a public symbol that anything outside the range imports.
 - Merges, splits, or moves files.
+- Compresses statements into an expression: a block body into an expression body, a local variable into the expression that uses it, an `if` into a conditional or pattern-match chain, sequential steps into one nested call. A named local that holds an intermediate result is documentation; keep it.
 
-A cut that saves lines by making a reader look in two places instead of one is not a cut. Reject it.
+A cut that saves lines by making a reader look in two places instead of one is not a cut. Neither is one that saves lines by making them look at one place harder. Reject both.
+
+The line to hold:
+
+```csharp
+// Keep. Two named steps, one plain condition.
+public static bool IsInitialInsert(DateTime? addedAt, DateTime? tradeCreatedOn)
+{
+    var added = Normalize(addedAt);
+    var created = Normalize(tradeCreatedOn);
+    if (!added.HasValue || !created.HasValue) return false;
+    return added.Value - created.Value <= Tolerance;
+}
+
+// Not a cut. Same work, fewer lines, more to unpack per line.
+public static bool IsInitialInsert(DateTime? addedAt, DateTime? tradeCreatedOn) =>
+    Normalize(addedAt) is { } added
+    && Normalize(tradeCreatedOn) is { } created
+    && added - created <= Tolerance;
+```
 
 ## Apply
 
