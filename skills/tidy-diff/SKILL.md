@@ -22,7 +22,7 @@ The standard is fewer *things* — fewer types, functions, parameters, branches,
 
 ## Review
 
-Dispatch one fresh review subagent. Give it the diff, the full text of the touched files, and the cut list below. Instruct it to inspect only what it was given: no worktree access, no tests or builds, no tools, no edits. Its whole job is to return ranked cuts.
+Dispatch one fresh review subagent. Give it the diff, the full text of the touched files, and both the cut list and the bit-predicate rule below. Instruct it to inspect only what it was given: no worktree access, no tests or builds, no tools, no edits. Its whole job is to return ranked cuts.
 
 Each cut names its location by symbol or a short greppable expression, says what to do (delete, inline, merge, rename), gives the one-line reason behavior is unchanged, and names the thing removed — a type, a function, a parameter, a branch, a duplicate computation, a comment. Rank by how much a reader no longer has to track. A cut whose only gain is fewer lines is not a cut; do not propose it.
 
@@ -42,6 +42,23 @@ Look for these in lines the change introduced:
 - An import, export, variable, or file that a cut above leaves unused. Delete it — after grepping the repository for consumers of any export you remove.
 - Style that differs from the surrounding file: the file's existing conventions win, even where the reviewer would choose otherwise.
 
+### Bit predicates
+
+Separate from the cut list, and regardless of what else the change does: a boolean condition the change introduces inside an `IQueryable` lambda never uses `!`. Write `x.IsVoid == false`.
+
+Negation translates to a `<>` predicate, which the query planner will not match against an index on that column; `== false` translates to `= 0`, which it will. Both select the same rows, so this is never a behavior change — it is the difference between a seek and a scan. A bare truthy reference already translates to `= 1` and needs nothing, so only the negation has to go.
+
+- `Where(x => !x.IsVoid)` becomes `Where(x => x.IsVoid == false)`.
+- `Where(x => x.IsActive)` stays exactly as written. Do not add `== true`.
+- `Any(x => x.IsActive && !x.IsVoid)` becomes `Any(x => x.IsActive && x.IsVoid == false)` — every negated operand, not just an outermost one.
+- A `bool?` is already sargable as `== true` or `== false`. Leave `!= true` alone: it is *not* interchangeable with `== false`, because the two disagree on null rows, and swapping them changes which rows come back.
+
+The rule follows `IQueryable`, not the provider. EF, linq2db, and any repository abstraction over either all translate the expression tree to SQL, so all of them are in scope, as is any `Expression<Func<...>>` the change builds. `IEnumerable` is not: a loaded navigation property, a `List<T>`, anything already `ToList()`ed runs in memory and keeps whatever form reads best. Where you cannot tell which one you are looking at, write `== false` — it costs a reader nothing, and a missed one costs a table scan.
+
+Plain in-memory C# is left alone. `if (!found)` and `while (!done)` stay exactly as written.
+
+This rule is mandatory and not a matter of taste. Apply it to every qualifying condition in the range, whether or not the reviewer raised it. Name occurrences you spot outside the range in the report and leave them alone.
+
 ## Preserve
 
 The reviewer proposes no cut that does any of the following, and you apply none that does:
@@ -49,7 +66,8 @@ The reviewer proposes no cut that does any of the following, and you apply none 
 - Changes any output, return value, thrown error type, side effect, or the order of a numeric expression. `total * (1 - p / 100)` and `total * (100 - p) / 100` are different code.
 - Touches a line the range did not touch, except to delete a line a cut has made dead.
 - Adds a test, a validation, a guard, a comment, a type annotation, or documentation.
-- Restyles working code — loop to `reduce`, `function` to arrow, quote style, reordering members.
+- Restyles working code — loop to `reduce`, `function` to arrow, quote style, reordering members. The bit-predicate rule is the sole exception, and it is mandatory rather than optional.
+- Rewrites an `== false` comparison back to `!x`, or reports one as drive-by noise. That form is required; a change that introduces it is correct and stays.
 - Renames or removes a public symbol that anything outside the range imports.
 - Merges, splits, or moves files.
 - Compresses statements into an expression: a block body into an expression body, a local variable into the expression that uses it, an `if` into a conditional or pattern-match chain, sequential steps into one nested call. A named local that holds an intermediate result is documentation; keep it.
