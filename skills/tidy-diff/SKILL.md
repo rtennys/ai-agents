@@ -102,9 +102,17 @@ public static bool IsInitialInsert(DateTime? addedAt, DateTime? tradeCreatedOn) 
 
 ## Commit
 
-1. Commit everything as one commit with the message `Tidy <subject of the first commit in the range>` — for example `Tidy Add discount codes`. Never amend, squash, or rewrite the original commits.
-2. Do not push.
-3. Report: the range reviewed, net lines removed, each cut applied, each cut dropped in step 3 of Apply, and each reviewer cut you rejected against the Preserve list. Name code by symbol, never by line number.
+1. Commit everything as one commit using the [Scoped Commits](https://scopedcommits.com/) format: `<scope>: <description>`. Never amend, squash, or rewrite the original commits.
+2. Choose the narrowest scope that accurately covers the tidy diff:
+   - Follow an established scoped-commit convention in the repository when one exists.
+   - In a .NET repository, normally use the project, component, or subsystem that owns the changed code.
+   - In a Go repository, normally use the package or `cmd/<name>` area that owns the changed code.
+   - When the diff crosses scopes, use their nearest meaningful shared area; if none exists, list the scopes separated by commas.
+3. Make the description after `<scope>:` as short and succinct as possible. Use `tidy <subject>` when the subject adds useful context, but derive a shorter description from the diff when the first commit's subject is verbose or vague.
+4. Never include a ticket number or issue number anywhere in the commit message, including the subject, body, or trailers. Strip one from any source text used to form the description. Do not add issue-closing syntax.
+5. Omit the body and trailers unless they contain essential context unrelated to a ticket or issue.
+6. Do not push.
+7. Report: the range reviewed, net lines removed, each cut applied, each cut dropped in step 3 of Apply, and each reviewer cut you rejected against the Preserve list. Name code by symbol, never by line number.
 
 ## Stop
 
