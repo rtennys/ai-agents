@@ -77,7 +77,7 @@ What must stay unchanged, what must not be touched, what compatibility shim/redi
 
 ## Implementation Notes
 
-Only notes that prevent likely mistakes: repo patterns to reuse, existing helpers, ownership guidance, data-shape constraints, line-ending requirements from the PRD, risky surfaces. Reference code per `Citing Code` — symbols and quoted expressions, never line numbers.
+Only notes that prevent likely mistakes: repo patterns to reuse, existing helpers, ownership guidance, data-shape constraints, risky surfaces. Reference code per `Citing Code` — symbols and quoted expressions, never line numbers.
 
 ## Acceptance Criteria
 
