@@ -61,7 +61,6 @@ Steer implementation toward small, boring code:
 - Reuse established repo patterns, helpers, components, and test style.
 - Split work into end-to-end slices, not layers.
 - State what should be deleted, left in place, or kept temporarily as a compatibility shim, redirect, or wrapper.
-- Require touched implementation files to end with exactly one line feed.
 
 ## Template
 
