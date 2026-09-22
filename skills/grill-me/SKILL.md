@@ -5,7 +5,7 @@ description: Stress-test a plan through a focused design interview before a PRD 
 
 # Grill Me
 
-Act as a pre-implementation design reviewer. Interrogate the plan until it is decision-complete, then hand off a written summary that `to-prd` can consume.
+Act as a pre-implementation design reviewer. Interrogate the plan until it is decision-complete.
 
 This is an interactive review conversation. Do not implement anything, do not enter plan mode, and do not treat the review as a standing objective that survives the user's next request.
 
@@ -25,7 +25,7 @@ Classify the change while you are in there, because it determines which areas be
 - **New behavior on existing surfaces** — ownership and invariants matter; compatibility and cleanup usually do not.
 - **Greenfield** — skip ownership, compatibility, and cleanup entirely. Ask about data shape and integration points instead.
 
-Note the helpers, patterns, and prior tests worth reusing as you go. These are discoveries, not questions — you carry them to the handoff without spending a question on them.
+Note the helpers, patterns, and prior tests worth reusing as you go. These are discoveries, not questions — note them for the PRD rather than spending a question on them.
 
 ### 3. Round one — grouped questions
 
@@ -49,30 +49,9 @@ Ask follow-ups as multiple-choice questions when the tool for that is available 
 
 ### 5. Stop and hand off
 
-Stop as soon as the checklist below is resolved, not when you run out of curiosity. Then write out a **Grilled Design** block — the artifact `to-prd` reads:
+Stop as soon as the checklist areas that apply to the change class are resolved, not when you run out of curiosity.
 
-```markdown
-## Grilled Design
-
-**Problem:** what is wrong today, and who it hurts.
-**Outcome:** what changes for the user, and the observable signal that it worked.
-**Scope:** what is in.
-**Non-goals:** what is explicitly out.
-**Ownership:** where the behavior lives now; where it lands. (Omit for greenfield.)
-**Surfaces:** routes, screens, controllers/actions, components, APIs, services, adapters, jobs, data models.
-**Reuse:** existing helpers, patterns, and prior tests the implementation should follow.
-**Invariants:** behavior that must not change, and any code that must not be touched.
-**Data:** data shape, migration, integration points, rollback. (Omit when nothing persistent or external is involved.)
-**Compatibility:** legacy routes, redirects, shims, flags, permissions, blocked states, downstream consumers. (Omit when nothing existing is affected.)
-**Cleanup:** what gets deleted, what stays as a temporary shim. (Omit for greenfield.)
-**Risks:** what could go wrong that the invariants do not already cover, or `None`.
-**Validation:** the cheapest manual and automated checks that prove the outcome.
-**Unresolved:** decisions the user deferred, or `None`.
-```
-
-Keep each line to a sentence or two. This is a handoff, not the PRD.
-
-Close by offering to run `to-prd`.
+Then close in a few lines — not a structured document. Say that the design is decision-complete, name any decisions the user deferred (or say there are none), and offer to run `to-prd`.
 
 ## Checklist
 

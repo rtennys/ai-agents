@@ -5,13 +5,13 @@ directory under `skills/` and defines its behavior in a `SKILL.md` file.
 
 ## Skills
 
-Four skills form one pipeline. Each hands a named artifact to the next. A
-fifth, `tidy-diff`, runs after any of them — or after any change at all.
+Four skills form one pipeline. Each feeds the next. A fifth, `tidy-diff`,
+runs after any of them — or after any change at all.
 
 | Skill | Consumes | Produces |
 | --- | --- | --- |
-| `grill-me` | A hand-written prompt or brief | A `Grilled Design` block |
-| `to-prd` | A `Grilled Design` block or discussion | `prd.md`, plus a one-session or split-into-issues recommendation |
+| `grill-me` | A hand-written prompt or brief | A decision-complete design, settled in the conversation |
+| `to-prd` | A design interview or discussion | `prd.md`, plus a one-session or split-into-issues recommendation |
 | `prd-to-issues` | `prd.md` | `issues/NNN-*.md` and `issues/index.md` |
 | `do-next-issue` | `issues/index.md` | One implemented, tested, committed issue |
 | `tidy-diff` | A committed change | One `Tidy ...` commit that shrinks it without changing behavior |
