@@ -9,7 +9,7 @@ Turn a PRD into issue files a fresh session on a cheaper model can implement one
 
 ## Workflow
 
-1. Locate the PRD. Use the user's path when given; otherwise infer the nearest `prd.md` from the current artifact folder, falling back to `artifacts/prd.md`.
+1. Locate the PRD. Use the user's path when given; otherwise use the nearest `prd.md` beside the source prompt or in the current working folder, falling back to `artifacts/prd.md`.
 2. Read the PRD. Do not rewrite or "improve" it.
 3. Inspect the repo only when it sharpens issue boundaries: owners, affected surfaces, existing patterns, tests, compatibility paths. Dispatch parallel read-only search agents for independent lookups.
 4. Read `Problem And Solution` for framing — every issue must serve it. Slice from `Implementation Plan`; sharpen scope with `Behavior Contract`, `Scope And Non-Goals`, `Compatibility And Cleanup`, `Risks`, and `Validation`. Older PRDs may carry an `Ownership And Reuse` section — read it as part of the implementation plan.
@@ -20,7 +20,7 @@ If the user asked to review the breakdown first, show it and wait. Otherwise cre
 
 Do not use GitHub commands.
 
-Issue files and the index are local progress-tracking state, never committed. Confirm the issues directory is gitignored; if it is not, add the entry before writing the files, and tell the user you did. Do not otherwise inspect Git state just to report on these files.
+Issue files and the index are local progress-tracking state, never committed. When the PRD directory is inside a Git repository, confirm the issues directory is gitignored; if it is not, add the entry before writing the files, and tell the user you did. Do not otherwise inspect Git state just to report on these files.
 
 ## Citing Code
 

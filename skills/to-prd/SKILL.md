@@ -12,7 +12,7 @@ Write a short PRD that a fresh session on a cheaper model can implement cleanly 
 1. Use the current chat, brief, draft PRD, and repo inspection as source material.
 2. Inspect the repo for implementation-critical facts rather than asking. Dispatch parallel read-only search agents for independent lookups.
 3. Ask only about unresolved choices that change scope, behavior, ownership, data shape, compatibility, or validation. When the session already interrogated the design, start from the decisions that interview left unresolved — those questions are already earned. Add a question beyond those only for a gap in one of those same areas that the repo cannot answer; the interview covered the rest, so re-asking wastes the user's attention.
-4. Write the PRD to the user's requested path. If none is given, use `prd.md` beside the source prompt when the prompt is under `artifacts/`; otherwise `artifacts/prd.md`.
+4. Write the PRD to the user's requested path. If none is given, write `prd.md` beside the source prompt or brief, wherever it lives; fall back to `artifacts/prd.md` only when there is no source file.
 5. Recommend one session or `prd-to-issues`, using the rule below.
 
 ## Length Budget
