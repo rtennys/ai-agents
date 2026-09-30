@@ -19,13 +19,13 @@ Write a short PRD that a fresh session on a cheaper model can implement cleanly 
 
 A PRD is a briefing, not a specification. Budget by change size:
 
-| Change | Target | Hard cap |
-| --- | --- | --- |
-| Single behavior, one owner | 250–400 words | 600 |
-| Several coupled behaviors | 400–700 words | 1000 |
-| Multi-slice, issue-split expected | 700–1000 words | 1400 |
+| Change | Target |
+| --- | --- |
+| Single behavior, one owner | 250–400 words |
+| Several coupled behaviors | 400–700 words |
+| Multi-slice, issue-split expected | 700–1000 words |
 
-Over the cap means you are specifying implementation, not requirements. Cut, do not compress into denser prose.
+The targets are advisory, not caps. Landing well over one is a signal to re-read for implementation detail that has crept in, not an instruction to trim. Never cut a fact the implementer needs to hit a number, and never compress into denser prose. When every sentence survives the three rules below, the length is right.
 
 Enforce this with three rules:
 
