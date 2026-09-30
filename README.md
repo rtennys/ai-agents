@@ -31,10 +31,11 @@ runs after any of them — or after any change at all.
   session applies them, tests gate the result, and it lands as one unpushed
   commit so it can be reverted independently.
 
-Issue files and the index are local progress-tracking state and are never
-committed. Neither line numbers nor stale code locations belong in any artifact
-these skills produce; code is referenced by symbol name or greppable
-expression throughout.
+The PRD, issue files and index are scaffolding for one ticket: local,
+never committed, and unread once the ticket ships. Anything that must outlive
+the ticket goes on the work item, in a commit message, or in code. Neither
+line numbers nor stale code locations belong in any artifact these skills
+produce; code is referenced by symbol name or greppable expression throughout.
 
 ## Structure
 

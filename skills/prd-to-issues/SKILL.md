@@ -20,7 +20,7 @@ If the user asked to review the breakdown first, show it and wait. Otherwise cre
 
 Do not use GitHub commands.
 
-Issue files and the index are local progress-tracking state, never committed. When the PRD directory is inside a Git repository, confirm the issues directory is gitignored; if it is not, add the entry before writing the files, and tell the user you did. Do not otherwise inspect Git state just to report on these files.
+Issue files and the index are local progress-tracking state, never committed, and nothing reads them once the ticket ships. Record only what the pipeline itself consumes; anything that must outlive the ticket goes on the work item, in a commit message, or in code. When the PRD directory is inside a Git repository, confirm the issues directory is gitignored; if it is not, add the entry before writing the files, and tell the user you did. Do not otherwise inspect Git state just to report on these files.
 
 ## Citing Code
 

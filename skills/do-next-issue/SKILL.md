@@ -50,7 +50,7 @@ Never write a line number into an issue file, the index, or a commit message. Re
 5. If this issue moved, renamed, extracted, or deleted code that a later issue references, fix those references now while you still have the context. Point them at what exists after your change — the new type, method, and file path — naming the component rather than a location. Repair wrong references only; do not rewrite a later issue's scope or decisions.
 6. Confirm the tracked working tree is clean.
 
-Issue files and the index are local progress-tracking state, never committed. They should already be gitignored; if the commit in step 3 would sweep them in, stop, add the gitignore entry, and tell the user — do not stage or commit them.
+Issue files and the index are local progress-tracking state, never committed, and nothing reads them once the ticket ships. The index `Notes` cell is for the next session working this queue; write nothing for readers beyond that. They should already be gitignored; if the commit in step 3 would sweep them in, stop, add the gitignore entry, and tell the user — do not stage or commit them.
 
 ## Stop
 

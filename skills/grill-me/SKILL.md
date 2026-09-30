@@ -53,6 +53,8 @@ Stop as soon as the checklist areas that apply to the change class are resolved,
 
 Then close in a few lines — not a structured document. Say that the design is decision-complete, name any decisions the user deferred (or say there are none), and offer to run `to-prd`.
 
+Anything out of scope that must outlive the ticket — a deferred decision, a rule disagreement between systems, a data repair nobody is doing now — belongs as a comment on the ticket, not in the PRD. Say so and offer to post it. The PRD and everything downstream of it are read only while this ticket is being done.
+
 ## Checklist
 
 Resolve every area that applies to the change class. Skip the rest — do not manufacture a question just to fill a heading.

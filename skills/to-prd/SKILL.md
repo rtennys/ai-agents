@@ -15,6 +15,10 @@ Write a short PRD that a fresh session on a cheaper model can implement cleanly 
 4. Write the PRD to the user's requested path. If none is given, write `prd.md` beside the source prompt or brief, wherever it lives; fall back to `artifacts/prd.md` only when there is no source file.
 5. Recommend one session or `prd-to-issues`, using the rule below.
 
+## The PRD Is Ephemeral
+
+The PRD, and the issues and index split from it, are scaffolding for this one ticket. Only the user and the sessions working the ticket read them, and nothing reads them after the ticket ships. So: no decision log, no status notes, no follow-up or future-work section, no context written for a future reader. Anything that must outlive the ticket goes on the work item as a comment, in the commit message, or in the code. `Open Decisions` is the one exception, because `prd-to-issues` reads it.
+
 ## Length Budget
 
 A PRD is a briefing, not a specification. Budget by change size:
