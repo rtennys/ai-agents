@@ -1,20 +1,23 @@
 ---
 name: do-next-issue
-description: Implement exactly one issue — the next unresolved one from an issue index — then validate, commit, update the index, and stop. Use when the user says "do the next issue", "work the queue", "run do-next-issue", or points at an issues index and asks for the next slice. Consumes the queue produced by prd-to-issues.
+description: Implement exactly one issue — the next one in index order — then validate, commit, update the index, and say whether to pause for a manual check or continue in a fresh session. Use when the user says "do the next issue", "work the queue", "run do-next-issue", or points at an issues index and asks for the next slice. Consumes the queue produced by prd-to-issues.
 ---
 
 # Do Next Issue
 
-Implement one issue from the queue, prove it works, record it, and stop.
+Implement the next issue in the queue, prove it works, record it, and stop.
+
+The queue is worked strictly in index order, one issue per session. Never skip an issue because it is blocked, needs a decision, or looks harder than the one after it. Whatever the next issue needs from the user, ask for it and wait.
 
 ## Select The Issue
 
 1. Read the index file.
-2. Take the issue named under `## Next Issue`. If that section is missing or stale, fall back to the first `In Progress` or `Todo` row whose blockers are satisfied; among several ready issues, prefer the earliest `AFK`.
-3. Never start a `Blocked` issue, and never start a `HITL` issue without the blocking decision in hand. Say what is blocking and stop.
-4. If no issue is ready, say so, name what would unblock the queue, and stop.
-5. Verify the working tree is clean. If it is dirty and the selected issue is already `In Progress`, a previous attempt failed partway — say so, summarize the uncommitted diff, and ask whether to resume or reset before touching anything. If it is dirty for any other reason, stop and explain what must be resolved first.
-6. Mark the issue `In Progress` in the index before you begin.
+2. Take the first row that is not `Done`. `## Next Issue` should name the same file; if it does not, the row order wins — fix the pointer and carry on.
+3. If that row is `Blocked`, the queue order and the `Blocked by` column disagree, or a blocker has not actually landed. Say which issues block it and what each one still needs, then ask the user how to proceed — resolve the blocker, declare it satisfied, or reorder the queue. Do not move on to a later issue.
+4. If that issue is `HITL`, read its `Open Questions Or Blockers` section and put each open question, decision, credential, or access need to the user plainly, with the options you see. Wait for the answer. Record what the user supplied in that section of the issue file, replacing the question, so a resumed session does not ask again. Then proceed with this issue in this session. Never implement a `HITL` issue on a guess, and never leave it for later.
+5. If every row is `Done`, say the queue is complete and stop.
+6. Verify the working tree is clean. If it is dirty and the selected issue is already `In Progress`, a previous attempt failed partway — say so, summarize the uncommitted diff, and ask whether to resume or reset before touching anything. If it is dirty for any other reason, stop and explain what must be resolved first.
+7. Mark the issue `In Progress` in the index before you begin.
 
 Read only that issue file — later issue files come into play only at close-out. Inspect only the repository files needed to implement this issue.
 
@@ -46,14 +49,24 @@ Never write a line number into an issue file, the index, or a commit message. Re
 1. Run the relevant tests and build.
 2. If they fail, stop. Do not commit. Do not mark the issue `Done`. Leave it `In Progress`, note the failure in its index `Notes` cell so the next session knows what it is walking into, and explain the failure and what changed.
 3. If they pass, commit with the message `Issue <filename>`, where `<filename>` is the issue file's base name without `.md` — for example `Issue 006-add-status-confirmation-and-data-group-lock`.
-4. Update the index: mark this issue `Done`; remove it from every `Blocked by` cell that names it, promoting rows to `Todo` once their `Blocked by` is empty; and repoint `## Next Issue`.
+4. Update the index: mark this issue `Done`; remove it from every `Blocked by` cell that names it, promoting rows to `Todo` once their `Blocked by` is empty; and point `## Next Issue` at the first row that is still not `Done`.
 5. If this issue moved, renamed, extracted, or deleted code that a later issue references, fix those references now while you still have the context. Point them at what exists after your change — the new type, method, and file path — naming the component rather than a location. Repair wrong references only; do not rewrite a later issue's scope or decisions.
 6. Confirm the tracked working tree is clean.
 
 Issue files and the index are local progress-tracking state, never committed, and nothing reads them once the ticket ships. The index `Notes` cell is for the next session working this queue; write nothing for readers beyond that. They should already be gitignored; if the commit in step 3 would sweep them in, stop, add the gitignore entry, and tell the user — do not stage or commit them.
 
+## Hand-Off
+
+End your final message with exactly one of these verdicts, on its own line, so the user never has to infer it:
+
+- **Pause for a manual check.** Use this when any of the following holds: an acceptance criterion is marked `Manual:` or otherwise names a check you could not run yourself; the issue is `Review` type; the change alters something only a person can judge — a screen, a report, an email, an external system — and no automated test covers it; or a later issue builds on behavior that you could not prove. Then list the exact steps the user should perform and the result each should show, so the check takes minutes. Say that the next issue should wait until the check passes.
+- **Continue.** Use this when the automated validation covers the acceptance criteria and nothing above applies. Say that the user can run `do-next-issue` in a fresh session for `<next-issue-file>`.
+- **Queue complete.** Every row is `Done`. Name any manual checks still outstanding from earlier issues.
+
+Pick the verdict from what you could and could not verify, not from how confident you feel. When in doubt, pause.
+
 ## Stop
 
 Stop after this one issue. Do not begin another. Do not mix issues in one implementation pass. Do not let a later issue influence this one, unless the codebase already changed because of a completed earlier issue.
 
-If the issue depends on a later issue, conflicts with an earlier change, requires an unclear product decision, or cannot be completed safely — stop and explain instead of guessing.
+If the issue depends on a later issue, conflicts with an earlier change, requires a product decision the issue file does not settle, or cannot be completed safely — stop, explain, and ask. Do not guess, and do not pick up a different issue instead.

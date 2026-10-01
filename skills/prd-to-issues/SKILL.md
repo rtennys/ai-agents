@@ -77,13 +77,14 @@ What must stay unchanged, what must not be touched, what compatibility shim/redi
 
 ## Implementation Notes
 
-Only notes that prevent likely mistakes: repo patterns to reuse, existing helpers, ownership guidance, data-shape constraints, risky surfaces. Reference code per `Citing Code` — symbols and quoted expressions, never line numbers.
+Orientation, not instructions. Always name: the entry point to start from, the existing pattern or sibling feature to mirror, the helpers that already do part of the job, and the test file to extend. Add only notes beyond that which prevent a likely mistake: ownership guidance, data-shape constraints, risky surfaces. Do not write step-by-step implementation detail — the implementing session has the live code and this note will have aged by the time it runs. Reference code per `Citing Code` — symbols and quoted expressions, never line numbers.
 
 ## Acceptance Criteria
 
 - [ ] Observable behavior works.
 - [ ] Required compatibility or non-regression behavior still works.
 - [ ] The cheapest useful validation check passes.
+- [ ] Manual: <a check only a person can perform, when one exists>.
 
 ## PRD Coverage
 
@@ -93,6 +94,10 @@ The PRD sections or bullets this issue implements.
 
 `None`, or the specific decision, dependency, or access need.
 ```
+
+Prefix an acceptance criterion with `Manual:` when only a person can perform it — looking at a screen, checking an external system, confirming an email arrived. `do-next-issue` pauses the queue for a manual check whenever an issue carries one, so include it only when the automated checks genuinely cannot cover the behavior.
+
+For a `HITL` issue, write `Open Questions Or Blockers` as the exact question the user must answer, with the options you see and what each implies. `do-next-issue` stops at that issue and puts the question to the user verbatim, so a vague note there costs a round trip.
 
 Do not store queue status — `Todo`, `In Progress`, `Blocked`, `Done` — in an issue file. That lives only in the index. The acceptance checkboxes are a within-issue implementation checklist for the session doing the work, not queue state, and no later session reads them.
 
@@ -111,7 +116,7 @@ The index must:
 - name the next issue explicitly
 - keep completed issues listed as `Done`
 
-The next issue is the first `In Progress` or `Todo` issue whose blockers are satisfied. If several are ready, prefer the earliest `AFK` issue.
+`do-next-issue` works the rows strictly top to bottom, one per session, and never skips a row: a `Blocked` or `HITL` row stops the queue there until the user resolves it. So the next issue is simply the first row that is not `Done`, and the row order is the execution order. Order rows so every blocker precedes its dependents, and place each `HITL` issue where the work naturally needs its decision — do not push `HITL` rows to the end or pull them to the front just to group the AFK work.
 
 Rows appear in execution order, so no separate order column is needed:
 
@@ -122,7 +127,7 @@ Rows appear in execution order, so no separate order column is needed:
 
 ## Next Issue
 
-`<issue-file>`, or why no issue is ready.
+`<issue-file>` — the first row below that is not `Done`.
 
 ## Issues
 

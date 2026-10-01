@@ -24,8 +24,10 @@ runs after any of them — or after any change at all.
   budget.
 - `prd-to-issues` - Split a product requirements document into small,
   self-contained implementation issues and a status index.
-- `do-next-issue` - Implement the next unresolved issue from an index, validate
-  it, and stop after that single issue.
+- `do-next-issue` - Implement the next issue in index order, validate it, and
+  stop after that single issue. A blocked or `HITL` issue is never skipped: the
+  session asks for what it needs. It ends by saying whether to pause for a
+  manual check or continue with the next issue in a fresh session.
 - `tidy-diff` - Aggressively simplify a just-committed change: fewer lines,
   fewer abstractions, identical behavior. A fresh reviewer proposes cuts, the
   session applies them, tests gate the result, and it lands as one unpushed
