@@ -28,9 +28,9 @@ Never cite a line number. No `L123`, no `L123-456`, no "at line 123", no `file.c
 
 Anchor on things that survive edits, in this order of preference:
 
-1. A symbol name — `ValuationService.GetOptionGreeks`, `OptionModelSelector.SelectModel`.
-2. A named position inside a symbol — "the `case (int)PositionType.ListedOption:` arm of `SetPlFields`", "the `if (savedVol != null)` block", "immediately around the `GetOptionGreeks(pos, impliedGreeks);` call".
-3. A short quoted expression the reader can grep — `` `var strike = grp.Average(x => x.Vals.StrikePrice)` ``.
+1. A symbol name — `InvoiceService.CalculateTotal`, `TaxRuleSelector.SelectRule`.
+2. A named position inside a symbol — "the `case OrderStatus.Cancelled:` arm of `ApplyStatus`", "the `if (cachedRate != null)` block", "immediately around the `CalculateTotal(order, discounts);` call".
+3. A short quoted expression the reader can grep — `` `var subtotal = lines.Sum(x => x.Quantity * x.UnitPrice)` ``.
 4. Just the file path, when the file is small or the symbol name already locates it.
 
 Quote code exactly as it appears rather than paraphrasing, so references stay greppable. A range that describes a whole member is always just that member's name.

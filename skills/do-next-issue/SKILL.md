@@ -25,8 +25,6 @@ Read only that issue file — later issue files come into play only at close-out
 
 Implement only that issue, directly in the current session. Do not start an implementation subagent unless the user explicitly asks for one.
 
-Prefer SQL projection over calling `LoadWith`.
-
 Treat any line number in an issue file as untrustworthy — earlier issues in the queue have already moved the code. Locate code by the symbol or quoted expression named alongside it and verify you are looking at the right thing. **If the issue's description and the actual code disagree, the code wins** — say so rather than implementing against a stale description.
 
 Never write a line number into an issue file, the index, or a commit message. Reference code by symbol name, by a named position inside a symbol, by a short quoted expression a reader can grep, or by file path alone when the file is small.
