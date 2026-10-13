@@ -45,6 +45,7 @@ When an issue depends on a component an earlier issue in this queue will create,
 - Allow an issue to touch multiple layers only where the behavior requires it.
 - Avoid layer-only issues unless no useful behavior slice exists.
 - Put blockers before dependents and number from the next available issue number.
+- The whole queue ships as one pull request. Never slice so that an issue needs its own merge or deploy before the next can start; a dependency between issues is satisfied by the earlier commit on the shared branch, proven locally.
 - Preserve PRD scope, non-goals, unchanged behavior, compatibility shims, redirects, wrappers, and cleanup boundaries.
 - Include enough local context in each issue that a new session can start from the issue file and the repo, using the parent PRD only as backup.
 
@@ -84,7 +85,7 @@ Orientation, not instructions. Always name: the entry point to start from, the e
 - [ ] Observable behavior works.
 - [ ] Required compatibility or non-regression behavior still works.
 - [ ] The cheapest useful validation check passes.
-- [ ] Manual: <a check only a person can perform, when one exists>.
+- [ ] Manual: <a check only a person can perform on their own machine, when one exists>.
 
 ## PRD Coverage
 
@@ -95,7 +96,9 @@ The PRD sections or bullets this issue implements.
 `None`, or the specific decision, dependency, or access need.
 ```
 
-Prefix an acceptance criterion with `Manual:` when only a person can perform it — looking at a screen, checking an external system, confirming an email arrived. `do-next-issue` pauses the queue for a manual check whenever an issue carries one, so include it only when the automated checks genuinely cannot cover the behavior.
+Every acceptance criterion must be provable on the developer's machine: the built app behind its real host, seeded data or a seeded session, a stubbed external call. Prefix a criterion with `Manual:` only when a person must perform it there — judging a screen, confirming a print dialog — and `do-next-issue` may pause the queue for it, so include one only when automated checks genuinely cannot cover the behavior.
+
+A check that needs a deployed environment — an external scanner, a vendor service bound to the deployed hostname, data that exists only there — is not an issue criterion and never gates the queue. The ticket ships as one pull request after the last issue, so list every such check once under a `## After The Deploy` heading in the index, below the table, one line each naming the check and the result it should show. `do-next-issue` appends to that list as it works and the user runs it once after the single merge.
 
 For a `HITL` issue, write `Open Questions Or Blockers` as the exact question the user must answer, with the options you see and what each implies. `do-next-issue` stops at that issue and puts the question to the user verbatim, so a vague note there costs a round trip.
 
@@ -134,7 +137,13 @@ Rows appear in execution order, so no separate order column is needed:
 | Status | Type | Issue | Blocked by | Notes |
 | --- | --- | --- | --- | --- |
 | Todo | AFK | `001-short-title.md` — <title> | None | <confidence or risk note> |
+
+## After The Deploy
+
+- <check that only the deployed environment can show, and the result it should give>
 ```
+
+Omit `## After The Deploy` when the PRD names no such check; `do-next-issue` adds the heading the first time it needs it.
 
 ## Final Response
 

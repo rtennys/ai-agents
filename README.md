@@ -24,14 +24,20 @@ runs after any of them — or after any change at all.
   advisory length budget.
 - `prd-to-issues` - Split a product requirements document into small,
   self-contained implementation issues and a status index.
-- `do-next-issue` - Implement the next issue in index order, validate it, and
-  stop after that single issue. A blocked or `HITL` issue is never skipped: the
-  session asks for what it needs. It ends by saying whether to pause for a
-  manual check or continue with the next issue in a fresh session.
+- `do-next-issue` - Implement the next issue in index order, prove it on the
+  local machine, and stop after that single issue. A blocked or `HITL` issue is
+  never skipped: the session asks for what it needs. It ends by saying whether
+  the next issue can start in a fresh session or a human judgment is needed
+  first.
 - `tidy-diff` - Aggressively simplify a just-committed change: fewer types,
   functions, parameters and branches, identical behavior. A fresh reviewer
   proposes cuts, the session applies them, tests gate the result, and it lands
   as one unpushed commit so it can be reverted independently.
+
+A ticket's queue ships as one pull request. Every issue is proven on the
+developer's machine; nothing is merged or deployed in order to test, and the
+few checks only a deployed environment can show are collected in the index and
+run once after that single merge.
 
 The PRD, issue files and index are scaffolding for one ticket: local,
 never committed, and unread once the ticket ships. Anything that must outlive

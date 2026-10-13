@@ -1,6 +1,6 @@
 ---
 name: do-next-issue
-description: Implement exactly one issue — the next one in index order — then validate, commit, update the index, and say whether to pause for a manual check or continue in a fresh session. Use when the user says "do the next issue", "work the queue", "run do-next-issue", or points at an issues index and asks for the next slice. Consumes the queue produced by prd-to-issues.
+description: Implement exactly one issue — the next one in index order — prove it on the local machine, commit, update the index, and say whether the next issue can start or a human judgment is needed first. Use when the user says "do the next issue", "work the queue", "run do-next-issue", or points at an issues index and asks for the next slice. Consumes the queue produced by prd-to-issues.
 ---
 
 # Do Next Issue
@@ -29,6 +29,12 @@ Treat any line number in an issue file as untrustworthy — earlier issues in th
 
 Never write a line number into an issue file, the index, or a commit message. Reference code by symbol name, by a named position inside a symbol, by a short quoted expression a reader can grep, or by file path alone when the file is small.
 
+## Prove It Locally
+
+Every acceptance criterion is proven on this machine before it is called manual or deferred. Exhaust the local options first: run the built app behind its real host instead of the dev server, seed the data or the session a flow needs, host the publish output under IIS Express when a web.config matters, stub the one external call that cannot be made, read a vendor's public artifact instead of asking for a dashboard. The user would rather the session spend an hour reproducing a condition locally than spend a deploy on it.
+
+Never open a pull request, merge, or deploy in order to test. The queue's commits accumulate on one branch, and the ticket ships as one pull request once the last issue lands; opening it is the user's call, with the house PR skill, not a step of this skill. A check genuinely needs the deployed environment only when nothing on this machine can observe it: an external scanner, a vendor service bound to the deployed hostname, data that exists only there. Those checks never gate the queue. Record each one in the index under a `## After The Deploy` heading, below the table, as one line naming the check and the result it should show; they run once, together, after the single merge.
+
 ## Review
 
 1. Review the diff. Confirm it contains only changes relevant to this issue.
@@ -47,7 +53,7 @@ Never write a line number into an issue file, the index, or a commit message. Re
 1. Run the relevant tests and build.
 2. If they fail, stop. Do not commit. Do not mark the issue `Done`. Leave it `In Progress`, note the failure in its index `Notes` cell so the next session knows what it is walking into, and explain the failure and what changed.
 3. If they pass, commit with the message `Issue <filename>`, where `<filename>` is the issue file's base name without `.md` — for example `Issue 006-add-status-confirmation-and-data-group-lock`.
-4. Update the index: mark this issue `Done`; remove it from every `Blocked by` cell that names it, promoting rows to `Todo` once their `Blocked by` is empty; and point `## Next Issue` at the first row that is still not `Done`.
+4. Update the index: mark this issue `Done`; remove it from every `Blocked by` cell that names it, promoting rows to `Todo` once their `Blocked by` is empty; point `## Next Issue` at the first row that is still not `Done`; and add any deploy-only check from this issue to `## After The Deploy`.
 5. If this issue moved, renamed, extracted, or deleted code that a later issue references, fix those references now while you still have the context. Point them at what exists after your change — the new type, method, and file path — naming the component rather than a location. Repair wrong references only; do not rewrite a later issue's scope or decisions.
 6. Confirm the tracked working tree is clean.
 
@@ -57,11 +63,11 @@ Issue files and the index are local progress-tracking state, never committed, an
 
 End your final message with exactly one of these verdicts, on its own line, so the user never has to infer it:
 
-- **Pause for a manual check.** Use this when any of the following holds: an acceptance criterion is marked `Manual:` or otherwise names a check you could not run yourself; the issue is `Review` type; the change alters something only a person can judge — a screen, a report, an email, an external system — and no automated test covers it; or a later issue builds on behavior that you could not prove. Then list the exact steps the user should perform and the result each should show, so the check takes minutes. Say that the next issue should wait until the check passes.
-- **Continue.** Use this when the automated validation covers the acceptance criteria and nothing above applies. Say that the user can run `do-next-issue` in a fresh session for `<next-issue-file>`.
-- **Queue complete.** Every row is `Done`. Name any manual checks still outstanding from earlier issues.
+- **Pause for a judgment.** Use this only when the next issue cannot safely start until a person has judged something this machine cannot: the issue is `Review` type, or the change alters something only a person can judge — how a screen reads, what a report says, how an email lands — and a later issue builds on it. List the exact steps the user should perform on this machine and the result each should show, so the check takes minutes. A check that needs a deploy or an external system is never a reason to pause; it belongs under `## After The Deploy`.
+- **Continue.** The default: the automated and local proof covers the acceptance criteria. Say that the user can run `do-next-issue` in a fresh session for `<next-issue-file>`, and name in one line anything this issue added to `## After The Deploy`.
+- **Queue complete.** Every row is `Done`. Repeat the `## After The Deploy` list, since that is what the user runs after merging the one pull request.
 
-Pick the verdict from what you could and could not verify, not from how confident you feel. When in doubt, pause.
+Pick the verdict from what you proved, not from how confident you feel. When in doubt, continue: a pause costs the user a round trip and tempts a deploy whose only purpose is to test.
 
 ## Stop
 

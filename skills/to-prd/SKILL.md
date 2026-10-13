@@ -91,7 +91,7 @@ End-to-end slices in execution order. Name the current and target owner, the sur
 
 ## Validation
 
-The cheapest checks that prove the behavior contract.
+The cheapest checks that prove the behavior contract, each runnable on the developer's machine. Name separately anything only the deployed environment can show; it runs once, after the ticket's single pull request merges.
 
 ## Open Decisions   <!-- conditional -->
 
@@ -114,7 +114,7 @@ Close the PRD by recommending one of two paths.
 **Run `prd-to-issues`** when any of these hold:
 
 - three or more independently shippable slices
-- a slice that must land and be verified before another can start
+- a slice that must be committed and proven locally before another can start
 - any slice classified `HITL` — blocked on a human decision, credential, or environment
 - migration, destructive cleanup, or a security boundary that deserves isolated review
 
