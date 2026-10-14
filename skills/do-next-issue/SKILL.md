@@ -1,6 +1,6 @@
 ---
 name: do-next-issue
-description: Implement exactly one issue — the next one in index order — prove it on the local machine, commit, update the index, and say whether the next issue can start or a human judgment is needed first. Use when the user says "do the next issue", "work the queue", "run do-next-issue", or points at an issues index and asks for the next slice. Consumes the queue produced by prd-to-issues.
+description: Implement exactly one issue — the next one in index order — prove it on the local machine, commit, update the index, and say whether the next issue can start or a human judgment is needed first. Use when the user says "do the next issue", "work the queue", "run do-next-issue", or points at an issues index and asks for the next slice. Also use when the user points at a PRD that to-prd sized for one session and asks to implement it: the PRD is then the one issue. Consumes the queue produced by prd-to-issues, or a single PRD from to-prd.
 ---
 
 # Do Next Issue
@@ -8,6 +8,19 @@ description: Implement exactly one issue — the next one in index order — pro
 Implement the next issue in the queue, prove it works, record it, and stop.
 
 The queue is worked strictly in index order, one issue per session. Never skip an issue because it is blocked, needs a decision, or looks harder than the one after it. Whatever the next issue needs from the user, ask for it and wait.
+
+## Single-PRD Mode
+
+When the user points at a `prd.md` (or a folder holding one) and there is no `issues/index.md` beside it, the PRD is the whole issue and there is no queue. Everything below applies with these substitutions:
+
+- The PRD's `Implementation Plan` is the issue body, worked in order and in full within this session; its `Behavior Contract` and `Validation` are the acceptance criteria. Skip `Select The Issue` except the clean-tree check in step 6.
+- The PRD is read-only. If it carries an `Open Decisions` section, put each decision to the user as you would a `HITL` issue and wait; carry the answers in the session, not in the file.
+- There is no index, so nothing is marked `In Progress` or `Done`, and there is no `Notes` cell: a failed close-out is reported in the final message with the tree left uncommitted.
+- Deploy-only checks go under a `## After The Deploy` heading in the hand-off message instead of an index, and the user carries them into the pull request description.
+- The commit message is `PRD <folder-name>`, where `<folder-name>` is the PRD's parent folder — for example `PRD 8390-sef-twilio-webhook`.
+- The only hand-off verdicts are **Pause for a judgment** and **PRD complete**.
+
+If `issues/index.md` does exist beside the PRD, the user split it: ignore the PRD and work the queue.
 
 ## Select The Issue
 
@@ -66,11 +79,12 @@ End your final message with exactly one of these verdicts, on its own line, so t
 - **Pause for a judgment.** Use this only when the next issue cannot safely start until a person has judged something this machine cannot: the issue is `Review` type, or the change alters something only a person can judge — how a screen reads, what a report says, how an email lands — and a later issue builds on it. List the exact steps the user should perform on this machine and the result each should show, so the check takes minutes. A check that needs a deploy or an external system is never a reason to pause; it belongs under `## After The Deploy`.
 - **Continue.** The default: the automated and local proof covers the acceptance criteria. Say that the user can run `do-next-issue` in a fresh session for `<next-issue-file>`, and name in one line anything this issue added to `## After The Deploy`.
 - **Queue complete.** Every row is `Done`. Repeat the `## After The Deploy` list, since that is what the user runs after merging the one pull request.
+- **PRD complete.** Single-PRD mode only: every slice of the `Implementation Plan` is committed and proven. Give the `## After The Deploy` list, since the user carries it into the pull request and runs it after the merge.
 
 Pick the verdict from what you proved, not from how confident you feel. When in doubt, continue: a pause costs the user a round trip and tempts a deploy whose only purpose is to test.
 
 ## Stop
 
-Stop after this one issue. Do not begin another. Do not mix issues in one implementation pass. Do not let a later issue influence this one, unless the codebase already changed because of a completed earlier issue.
+Stop after this one issue. Do not begin another. Do not mix issues in one implementation pass. Do not let a later issue influence this one, unless the codebase already changed because of a completed earlier issue. In single-PRD mode the one issue is the whole PRD: do not stop between slices of its `Implementation Plan`, and do not split it into a queue — that is `prd-to-issues`' job, and the user chose not to run it.
 
 If the issue depends on a later issue, conflicts with an earlier change, requires a product decision the issue file does not settle, or cannot be completed safely — stop, explain, and ask. Do not guess, and do not pick up a different issue instead.

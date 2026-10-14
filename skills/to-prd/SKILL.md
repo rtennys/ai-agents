@@ -1,6 +1,6 @@
 ---
 name: to-prd
-description: Write a concise, self-contained Product Requirements Document (PRD) from a client brief, grilled design, implementation discussion, or rough PRD draft. Use when the user says "write a PRD", "turn this into a PRD", or wants a plan another AI session can implement with minimal extra context, especially before coding or issue-splitting. Consumes the output of grill-me; feeds prd-to-issues.
+description: Write a concise, self-contained Product Requirements Document (PRD) from a client brief, grilled design, implementation discussion, or rough PRD draft. Use when the user says "write a PRD", "turn this into a PRD", or wants a plan another AI session can implement with minimal extra context, especially before coding or issue-splitting. Consumes the output of grill-me; feeds prd-to-issues, or do-next-issue directly when the PRD fits one session.
 ---
 
 # To PRD
@@ -13,11 +13,11 @@ Write a short PRD that a fresh session on a cheaper model can implement cleanly 
 2. Inspect the repo for implementation-critical facts rather than asking. Dispatch parallel read-only search agents for independent lookups.
 3. Ask only about unresolved choices that change scope, behavior, ownership, data shape, compatibility, or validation. When the session already interrogated the design, start from the decisions that interview left unresolved — those questions are already earned. Add a question beyond those only for a gap in one of those same areas that the repo cannot answer; the interview covered the rest, so re-asking wastes the user's attention.
 4. Write the PRD to the user's requested path. If none is given, write `prd.md` beside the source prompt or brief, wherever it lives; fall back to `artifacts/prd.md` only when there is no source file.
-5. Recommend one session or `prd-to-issues`, using the rule below.
+5. Recommend `do-next-issue` on the PRD or `prd-to-issues`, using the rule below.
 
 ## The PRD Is Ephemeral
 
-The PRD, and the issues and index split from it, are scaffolding for this one ticket. Only the user and the sessions working the ticket read them, and nothing reads them after the ticket ships. So: no decision log, no status notes, no follow-up or future-work section, no context written for a future reader. Anything that must outlive the ticket goes on the work item as a comment, in the commit message, or in the code. `Open Decisions` is the one exception, because `prd-to-issues` reads it.
+The PRD, and the issues and index split from it, are scaffolding for this one ticket. Only the user and the sessions working the ticket read them, and nothing reads them after the ticket ships. So: no decision log, no status notes, no follow-up or future-work section, no context written for a future reader. Anything that must outlive the ticket goes on the work item as a comment, in the commit message, or in the code. `Open Decisions` is the one exception, because `prd-to-issues` and `do-next-issue` read it.
 
 ## Length Budget
 
@@ -98,13 +98,13 @@ The cheapest checks that prove the behavior contract, each runnable on the devel
 Decisions still owed by a human, each naming who or what resolves it.
 ```
 
-Omit `Open Decisions` when there are none. When there are any, the section is mandatory — `prd-to-issues` reads only the file, and an unresolved decision that lives solely in the chat becomes an issue misclassified `AFK` and implemented on a guess.
+Omit `Open Decisions` when there are none. When there are any, the section is mandatory — `prd-to-issues` and `do-next-issue` read only the file, and an unresolved decision that lives solely in the chat becomes an issue misclassified `AFK`, or a single-PRD session implementing on a guess.
 
 ## Session Sizing
 
-Close the PRD by recommending one of two paths.
+Close the PRD by recommending one of two paths, naming the skill the user runs next.
 
-**One session** when all of these hold:
+**Run `do-next-issue` on the PRD** — one session, no issue split — when all of these hold:
 
 - one end-to-end slice, or two that cannot be usefully separated
 - a single primary owner
@@ -119,5 +119,7 @@ Close the PRD by recommending one of two paths.
 - migration, destructive cleanup, or a security boundary that deserves isolated review
 
 When it is close, prefer issues. A queue that turns out to be one session costs a little ceremony; a session that turns out to be three loses context partway through.
+
+Say which path in the reply and in the PRD's closing line, as the command: "Run `do-next-issue` on this PRD" or "Run `prd-to-issues`". A fresh session reads the PRD, not this chat, so the recommendation has to be in the file.
 
 If the PRD still carries an unresolved decision, record it under `Open Decisions` and say so plainly in your reply. Do not write around it.
